@@ -8,20 +8,45 @@ Built on [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview), t
 
 ## What This Looks Like
 
-Every tool returns a rich, interactive UI rendered directly in the conversation:
+Every tool returns a rich, interactive UI rendered directly in the conversation. All 13 tools have visual representations — 15 UI screens total:
+
+### Calendar Views
 
 | Tool | UI | What You See |
-|------|------------|--------------|
-| `list-events` | Day View | 24-hour timeline with positioned event blocks, current time indicator, day navigation |
-| `list-events` | Week View | 7-column grid with all-day banner, overlapping event handling, today highlight |
-| `list-events` | Month View | Monthly grid with colored event pills, click-to-drill-down, "+N more" overflow |
-| `get-event` | Event Detail | Full event card with attendees, RSVP buttons, "Join Meeting" link, delete action |
-| `create-event` | Event Form | Complete creation form — title, date/time pickers, attendees, recurrence, color picker |
-| `update-event` | Event Form | Same form, pre-filled with existing event data |
-| `search-events` | Agenda | Searchable event list with filters, keyboard navigation, expandable details |
-| `get-freebusy` | Availability | Visual free/busy heatmap across multiple calendars with common free slot detection |
+|------|-----|--------------|
+| `list-events` | **Upcoming Events** | Events grouped by day with colored cards, time, title, location, "Join" buttons for meetings |
+| `search-events` | **Agenda** | Searchable event list with date filters, keyboard navigation, expandable inline details |
+| `get-freebusy` | **Availability** | Visual free/busy heatmap across calendars with common free slot detection |
 
-All UIs are styled with Google Calendar's design system — Google Sans font, Material Design elevation, the same color palette and component patterns.
+Three alternate calendar views are also available (built but mapped to `list-events` on demand):
+
+| UI | What You See |
+|-----|--------------|
+| **Day View** | 24-hour vertical timeline with positioned event blocks, current time indicator, day navigation |
+| **Week View** | 7-column grid with all-day banner, overlapping event handling, today column highlighted |
+| **Month View** | Monthly grid with colored event pills, "+N more" overflow, click day to drill down |
+
+### Event Management
+
+| Tool | UI | What You See |
+|------|-----|--------------|
+| `get-event` | **Event Detail** | Full event card — attendees with RSVP status, "Join Meeting" link, location map, Accept/Decline/Delete actions, recurrence info |
+| `create-event` | **Event Form** | Creation form with title, date/time pickers, all-day toggle, calendar selector, color picker, attendee chips, recurrence dropdown |
+| `update-event` | **Event Form** | Same form pre-filled with existing event data for editing |
+| `delete-event` | **Delete Confirmation** | Animated success/error card with event ID and status message |
+| `respond-to-event` | **RSVP Confirmation** | Response status (accepted/declined/tentative) with event summary card |
+| `create-events` | **Bulk Create Progress** | Progress bar, per-event success/failure breakdown, created event list |
+
+### Utilities
+
+| Tool | UI | What You See |
+|------|-----|--------------|
+| `list-calendars` | **Calendar List** | All calendars with color swatches, access role badges (Owner/Writer/Reader), grouped by account |
+| `list-colors` | **Color Palette** | Event and calendar color grids with names, hex values, click-to-copy ID |
+| `get-current-time` | **Clock / Timezone** | Large digital clock, date, timezone name, UTC offset, DST indicator, auto-updating |
+| `manage-accounts` | **Account Manager** | Connected accounts with status badges, email, calendar count, auth URLs for new accounts |
+
+All UIs support **light and dark mode** — adapting to the host's theme automatically via `hostContext.theme` or `prefers-color-scheme`. Styled with Google Calendar's design system — Google Sans font, Material Design 3 elevation, official event color palette.
 
 ## How It Works
 
@@ -116,20 +141,32 @@ SERVERS='["http://127.0.0.1:3001"]' npx tsx examples/basic-host/serve.ts
 ```
 gcal-mcpui/
 ├── apps/                      # MCP Apps UI source (HTML + TypeScript)
-│   ├── shared/                # Shared utilities (gcal-app.ts, time-utils.ts)
-│   ├── day-view/              # Day timeline view
-│   ├── week-view/             # Week grid view
-│   ├── month-view/            # Month calendar grid
-│   ├── event-detail/          # Event detail card with actions
+│   ├── shared/                # Shared code
+│   │   ├── gcal-app.ts        # Typed tool call wrappers, App factory, theme detection
+│   │   ├── time-utils.ts      # Date/time formatting, calendar math
+│   │   ├── components.ts      # Reusable UI components (cards, badges, buttons, toasts...)
+│   │   ├── base-styles.ts     # Theme tokens (light + dark)
+│   │   └── theme.css          # CSS custom properties reference
+│   ├── upcoming/              # Upcoming events (default for list-events)
+│   ├── day-view/              # 24h day timeline
+│   ├── week-view/             # 7-column week grid
+│   ├── month-view/            # Monthly calendar grid
+│   ├── agenda/                # Searchable event list
+│   ├── event-detail/          # Event detail card
 │   ├── event-form/            # Event creation/edit form
-│   ├── upcoming/              # Upcoming events card list
-│   ├── freebusy/              # Availability heatmap
-│   └── agenda/                # Searchable event list
+│   ├── delete-confirm/        # Deletion confirmation
+│   ├── rsvp-confirm/          # RSVP response confirmation
+│   ├── bulk-create/           # Bulk creation progress
+│   ├── freebusy/              # Free/busy availability
+│   ├── calendar-list/         # Calendar list with roles
+│   ├── colors/                # Color palette browser
+│   ├── clock/                 # Clock / timezone display
+│   └── accounts/              # Account manager
 ├── src/
 │   ├── server.ts              # MCP server (registers tools + UI resources)
-│   ├── apps/ui-resources.ts   # Maps tools → ui:// resources
+│   ├── apps/ui-resources.ts   # Maps tools → ui:// resources (15 views)
 │   ├── tools/registry.ts      # Tool definitions with _meta.ui
-│   ├── handlers/core/         # Google Calendar API handlers
+│   ├── handlers/core/         # Google Calendar API handlers (13 tools)
 │   └── ...                    # Auth, transports, services (from upstream)
 ├── dist/apps/                 # Built single-file HTML apps (Vite output)
 └── build/                     # Server build (esbuild output)
@@ -141,86 +178,176 @@ The `App` class from `@modelcontextprotocol/ext-apps` handles the iframe ↔ hos
 
 ### Tool → UI Mapping
 
-| Tool | Default UI Resource |
-|------|-------------------|
-| `list-events` | `ui://gcal/day-view` |
-| `search-events` | `ui://gcal/agenda` |
-| `get-event` | `ui://gcal/event-detail` |
-| `create-event` | `ui://gcal/event-form` |
-| `update-event` | `ui://gcal/event-form` |
-| `get-freebusy` | `ui://gcal/freebusy` |
+Every tool has a UI. 13 tools, 15 views (some tools share a view, some have alternates):
 
-Tools without a UI mapping (`list-calendars`, `list-colors`, `get-current-time`, `delete-event`, `respond-to-event`, `manage-accounts`) return text-only responses.
+| Tool | Default UI Resource | Alternate Views |
+|------|-------------------|-----------------|
+| `list-events` | `ui://gcal/upcoming` | day-view, week-view, month-view |
+| `search-events` | `ui://gcal/agenda` | |
+| `get-event` | `ui://gcal/event-detail` | |
+| `create-event` | `ui://gcal/event-form` | |
+| `create-events` | `ui://gcal/bulk-create` | |
+| `update-event` | `ui://gcal/event-form` | |
+| `delete-event` | `ui://gcal/delete-confirm` | |
+| `respond-to-event` | `ui://gcal/rsvp-confirm` | |
+| `get-freebusy` | `ui://gcal/freebusy` | |
+| `get-current-time` | `ui://gcal/clock` | |
+| `list-calendars` | `ui://gcal/calendar-list` | |
+| `list-colors` | `ui://gcal/colors` | |
+| `manage-accounts` | `ui://gcal/accounts` | |
 
-## Interactive UI Features
+## All 15 Screens
+
+### Upcoming Events (default for `list-events`)
+- Events grouped by day with relative headers ("Today", "Tomorrow", "Wed, Mar 18")
+- Event cards with left color bar, time range, title, location
+- All-day event support
+- "Join" button for video meetings
+- "Load more" pagination for additional events
+- Auto-fetches from primary calendar if called with empty input
 
 ### Day View
 - 24-hour vertical timeline with 48px/hour grid
 - Events positioned and colored by calendar
-- Overlapping event columns
-- Current time red line indicator (auto-updates)
-- Click event → detail popup
-- Prev/Next day navigation, "Today" button
+- Overlapping event column layout
+- Current time red line indicator (auto-updates every minute)
+- All-day events banner at top
+- Click event → detail popup with full info
+- Prev/Next day navigation + "Today" button
 
 ### Week View
-- 7-column grid with all-day event banner
-- Today's column highlighted
-- Event overlap handling per column
-- Week navigation
+- 7-column grid (Sun–Sat) with positioned event blocks
+- All-day event banner row at top
+- Today's column highlighted with blue tint
+- Event overlap handling within each day column
+- Current time indicator in today's column
+- Week navigation (prev/next)
 
 ### Month View
-- Traditional month grid with event pills (max 3 per cell)
-- "+N more" overflow with click-to-expand
-- Today in blue circle
+- Traditional month grid with colored event pills (max 3 per cell)
+- "+N more" overflow links with click-to-expand
+- Today's date in blue circle
+- Days outside current month dimmed
 - Click day → event popup, click event → detail popup
+- Month navigation + "Today" button
+
+### Agenda
+- Search bar with 500ms debounce calling `search-events`
+- Date range filter (start/end date inputs)
+- Events grouped by day with sticky headers
+- Compact row format: time | title | location | color dot
+- Click-to-expand inline details (description, attendees, meeting link)
+- Keyboard navigation (arrow keys + Enter)
 
 ### Event Detail Card
-- Left color strip, full event info
-- Attendee list with RSVP status indicators
-- "Join Meeting" button (Google Meet / video links)
-- Location → Google Maps link
-- Action buttons: Accept, Decline, Maybe, Delete
-- Recurrence info with human-readable RRULE parsing
+- Left color strip (4px, event color)
+- Full event info: title, date/time, location, description
+- Attendee list with 32px avatar circles and RSVP status (✓ accepted, ✗ declined, ? tentative)
+- "Join Meeting" button for Google Meet / video links
+- Location → Google Maps link via `sendOpenLink`
+- Action buttons: Accept, Decline, Maybe, Delete (with confirmation dialog)
+- Recurrence info with human-readable RRULE parsing (daily, weekly, monthly, etc.)
 
 ### Event Form
-- Title, date/time pickers, all-day toggle
-- Calendar selector (fetched from `list-calendars`)
-- Color picker (fetched from `list-colors`)
-- Attendee input with email validation and chips
-- Recurrence dropdown (Daily/Weekly/Monthly/Yearly)
-- Saves via `create-event` or `update-event`
+- Title input (22px, Google Calendar style underline)
+- Date/time pickers with all-day toggle
+- Calendar selector dropdown (populated from `list-calendars`)
+- Color picker (populated from `list-colors`) with selection ring
+- Attendee input with email validation and removable chips
+- Recurrence dropdown (None / Daily / Weekly / Monthly / Yearly → RRULE)
+- Location and description text fields
+- Save calls `create-event` or `update-event`, Cancel clears form
 
-### Agenda View
-- Search bar with debounced `search-events` calls
-- Date range filter
-- Events grouped by day with relative labels ("Today", "Tomorrow")
-- Click-to-expand inline details
-- Keyboard navigation (arrow keys + Enter)
+### Delete Confirmation
+- Animated success/error icon (scale-in animation)
+- Success: green checkmark, "Event deleted" heading, event ID
+- Error: red X, "Failed to delete event" heading, error message
+- Clean centered card layout
+
+### RSVP Confirmation
+- Response icon with color: ✓ green (accepted), ✗ red (declined), ? yellow (tentative)
+- Response text: "You accepted / declined / responded tentatively"
+- Event summary card with title, date/time, location
+- "Updates sent to" info (all / external / none)
+
+### Bulk Create Progress
+- Summary: "Created N of M events"
+- 8px progress bar (green fill proportional to success rate)
+- Stats row: green "N created" badge + red "N failed" badge (if applicable)
+- Collapsible created events list with color dot, title, date
+- Failed events section (red-tinted) with error messages per event
 
 ### Free/Busy Availability
 - Horizontal timeline bars per calendar
-- Busy blocks (blue) over free background (green)
-- Hover tooltips on busy periods
-- Common free slot detection and highlighting
-- Today / This Week / Custom range selectors
+- Busy blocks (blue, semi-transparent) over free background (green)
+- Hover tooltips showing busy period time range
+- Common free slot detection and green highlighting
+- Range selectors: Today / This Week / Custom date picker
+
+### Calendar List
+- All calendars with 14px color swatches and names
+- Access role badges: "Owner" (green), "Writer" (blue), "Reader" (gray)
+- Star icon for primary calendar
+- Grouped by account when multiple accounts connected
+- Calendar count in header
+
+### Color Palette
+- Two sections: "Event Colors" and "Calendar Colors"
+- 3-column grid of color cards: 32px swatch, color name, hex value, ID
+- Event colors named: Lavender, Sage, Grape, Flamingo, Banana, Tangerine, Peacock, Graphite, Blueberry, Basil, Tomato
+- Click to copy color ID to clipboard (toast confirmation)
+
+### Clock / Timezone
+- Large digital clock (48px font, auto-updates every second)
+- Full date with day of week
+- Timezone name with abbreviation and UTC offset
+- DST indicator badge: "DST Active" (green) or "Standard Time" (neutral)
+
+### Account Manager
+- Connected accounts with avatar circles, account ID, email
+- Status badges: "Active" (green), "Expired" (warning), "Error" (red)
+- Calendar count and primary calendar info per account
+- For add action: auth URL link and instructions
+- For remove action: success/error message with remaining account count
+
+## Shared Component Library
+
+All UIs share a reusable component library at `apps/shared/components.ts`:
+
+| Component | Description |
+|-----------|-------------|
+| `renderEventCard()` | Event card with color bar, time, title, location, join button |
+| `renderAttendeeChip()` | Avatar circle + name + RSVP status icon |
+| `renderColorSwatch()` | Themed color circle (any size, selection ring) |
+| `renderBadge()` | Status badge — success / error / warning / info / neutral variants |
+| `renderButton()` | Themed button — primary / secondary / danger / text variants |
+| `renderListItem()` | Icon + title + subtitle + badge row |
+| `renderEmptyState()` | Centered placeholder with icon and message |
+| `renderSpinner()` | Loading spinner with message |
+| `renderSectionHeader()` | Uppercase label divider |
+| `showToast()` | Animated notification popup (auto-dismiss) |
+| `showConfirmDialog()` | Modal dialog with confirm/cancel actions |
+| `escapeHtml()` | XSS-safe HTML escaping |
+
+All components use CSS custom properties for theming — they work in both light and dark mode automatically.
 
 ## Development
 
 ```bash
 npm install
-npm run build:apps    # Build UI apps only (Vite)
+npm run build:apps    # Build all 15 UI apps (Vite)
 npm run build:server  # Build server only (esbuild)
-npm run build         # Build everything
+npm run build         # Build everything (apps + server)
 
-npm test              # Run unit tests (809 tests)
+npm test              # Run unit tests (808 tests)
 npm run lint          # TypeScript type check
 ```
 
 ### Adding a New UI View
 
-1. Create `apps/<name>/index.html` and `apps/<name>/src/app.ts`
-2. Use `createGCalApp()` from `apps/shared/gcal-app.ts` for typed tool calls
-3. Add the `ui://` resource URI to `src/apps/ui-resources.ts`
+1. Create `apps/<name>/index.html` with theme CSS tokens (copy from any existing app)
+2. Create `apps/<name>/src/app.ts` using `createGCalApp()` and shared components
+3. Add the `ui://` resource URI to `src/apps/ui-resources.ts` → `UI_RESOURCES` array
 4. Map the tool → URI in `TOOL_UI_MAP`
 5. `npm run build` and test
 
