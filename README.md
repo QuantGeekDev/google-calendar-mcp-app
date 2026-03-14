@@ -1,4 +1,4 @@
-# google-calendar-mcp-apps
+# google-calendar-mcp-app
 
 Google Calendar with interactive UI — right inside your AI chat.
 
@@ -11,8 +11,8 @@ Built on [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview), t
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/QuantGeekDev/google-calendar-mcp-apps.git
-cd google-calendar-mcp-apps
+git clone https://github.com/QuantGeekDev/google-calendar-mcp-app.git
+cd google-calendar-mcp-app
 npm install
 npm run build
 ```
@@ -69,7 +69,7 @@ Add to `~/.config/Claude/claude_desktop_config.json` (Linux) or `~/Library/Appli
   "mcpServers": {
     "google-calendar": {
       "command": "node",
-      "args": ["/absolute/path/to/google-calendar-mcp-apps/build/index.js"],
+      "args": ["/absolute/path/to/google-calendar-mcp-app/build/index.js"],
       "env": {
         "GOOGLE_OAUTH_CREDENTIALS": "/absolute/path/to/gcp-oauth.keys.json"
       }
@@ -165,7 +165,7 @@ Hosts without MCP Apps support still get text responses. The UI is additive.
 ## Architecture
 
 ```
-google-calendar-mcp-apps/
+google-calendar-mcp-app/
 ├── apps/                       # 15 MCP Apps (HTML + TypeScript)
 │   ├── shared/                 # Shared code
 │   │   ├── gcal-app.ts         # Typed tool wrappers, theme detection

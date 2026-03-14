@@ -1,5 +1,5 @@
 {
-  "name": "google-calendar-mcp-apps",
+  "name": "google-calendar-mcp-app",
   "version": "0.1.0",
   "description": "Google Calendar MCP Server with interactive MCP Apps UI",
   "type": "module",
