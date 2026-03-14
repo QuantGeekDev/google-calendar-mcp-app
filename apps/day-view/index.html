@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Day View</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --text-primary: #3c4043;
+    --text-secondary: #70757a;
+    --text-muted: #70757a;
+    --border: #dadce0;
+    --border-light: #dadce0;
+    --accent: #1a73e8;
+    --accent-hover: #1765cc;
+    --red: #ea4335;
+    --shadow-sm: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+    --shadow-md: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+    --shadow-lg: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 8px;
+    --hour-height: 48px;
+    --time-gutter: 56px;
+    --font-stack: 'Google Sans', Roboto, Arial, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-stack);
+    background: var(--bg);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    flex-shrink: 0;
+    z-index: 10;
+    min-height: 48px;
+  }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .nav-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 20px;
+    transition: background 0.2s;
+    line-height: 1;
+  }
+
+  .nav-btn:hover {
+    background: #f1f3f4;
+  }
+
+  .nav-btn:active {
+    background: #e8eaed;
+  }
+
+  .header-date {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text-primary);
+    min-width: 200px;
+    text-align: center;
+    letter-spacing: 0;
+    font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  }
+
+  .today-btn {
+    padding: 0 16px;
+    height: 36px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    border-radius: 18px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-family: 'Google Sans', Roboto, Arial, sans-serif;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    line-height: 36px;
+    letter-spacing: .25px;
+  }
+
+  .today-btn:hover {
+    background: #f1f3f4;
+    border-color: #c6c9cc;
+    box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+  }
+
+  .today-btn:active {
+    background: #e8eaed;
+  }
+
+  .all-day-section {
+    border-bottom: 1px solid var(--border);
+    padding: 4px 0 4px var(--time-gutter);
+    min-height: 0;
+    flex-shrink: 0;
+    display: none;
+    position: relative;
+  }
+
+  .all-day-section.has-events {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding-right: 16px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+
+  .all-day-label {
+    position: absolute;
+    left: 0;
+    width: var(--time-gutter);
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: right;
+    padding-right: 8px;
+    line-height: 28px;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+  }
+
+  .all-day-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 8px;
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 22px;
+    line-height: 22px;
+    transition: opacity 0.2s;
+  }
+
+  .all-day-chip:hover { opacity: 0.85; }
+
+  .grid-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .grid-container::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .grid-container::-webkit-scrollbar-thumb {
+    background: #dadce0;
+    border-radius: 4px;
+  }
+
+  .grid-container::-webkit-scrollbar-thumb:hover {
+    background: #bdc1c6;
+  }
+
+  .grid-container::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .time-grid {
+    position: relative;
+    min-height: calc(24 * var(--hour-height));
+  }
+
+  .hour-row {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: var(--hour-height);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hour-label {
+    position: absolute;
+    left: 0;
+    top: -6px;
+    width: var(--time-gutter);
+    text-align: right;
+    padding-right: 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1;
+    user-select: none;
+    font-family: Roboto, Arial, sans-serif;
+    font-weight: 400;
+  }
+
+  .hour-line {
+    position: absolute;
+    left: var(--time-gutter);
+    right: 0;
+    top: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .half-hour-line {
+    position: absolute;
+    left: var(--time-gutter);
+    right: 0;
+    top: 24px;
+    border-top: 1px solid var(--border);
+    opacity: 0;
+  }
+
+  .events-layer {
+    position: absolute;
+    top: 0;
+    left: var(--time-gutter);
+    right: 8px;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .event-block {
+    position: absolute;
+    border-radius: var(--radius-sm);
+    padding: 2px 8px;
+    color: #fff;
+    font-size: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    pointer-events: auto;
+    border: none;
+    border-left: none;
+    transition: box-shadow 0.2s, filter 0.2s;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 17px;
+  }
+
+  .event-block:hover {
+    box-shadow: var(--shadow-md);
+    filter: brightness(0.92);
+    z-index: 5;
+  }
+
+  .event-title {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    font-size: 12px;
+    font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  }
+
+  .event-time {
+    font-size: 11px;
+    opacity: 0.95;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 400;
+    font-family: Roboto, Arial, sans-serif;
+  }
+
+  .event-location {
+    font-size: 11px;
+    opacity: 0.85;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 400;
+    font-family: Roboto, Arial, sans-serif;
+  }
+
+  .current-time-line {
+    position: absolute;
+    left: var(--time-gutter);
+    right: 0;
+    height: 0;
+    z-index: 8;
+    pointer-events: none;
+    display: none;
+  }
+
+  .current-time-line.visible {
+    display: block;
+  }
+
+  .current-time-line::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: -6px;
+    width: 12px;
+    height: 12px;
+    background: var(--red);
+    border-radius: 50%;
+  }
+
+  .current-time-line::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -1px;
+    height: 2px;
+    background: var(--red);
+  }
+
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bg);
+    color: var(--text-primary);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    z-index: 20;
+    transition: box-shadow 0.3s, transform 0.2s;
+  }
+
+  .fab:hover {
+    box-shadow: 0 2px 6px 2px rgba(60,64,67,.3), 0 8px 16px 6px rgba(60,64,67,.15);
+  }
+
+  .fab:active {
+    transform: scale(0.95);
+  }
+
+  .fab svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  /* Event detail popup */
+  .popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .popup-overlay.visible {
+    display: flex;
+  }
+
+  .popup {
+    background: var(--bg);
+    border-radius: var(--radius-md);
+    box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+    max-width: 448px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 0;
+    position: relative;
+  }
+
+  .popup-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 8px 8px 0 8px;
+    gap: 4px;
+  }
+
+  .popup-body {
+    padding: 0 24px 24px 24px;
+  }
+
+  .popup-close {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 18px;
+    transition: background 0.2s;
+  }
+
+  .popup-close:hover {
+    background: #f1f3f4;
+  }
+
+  .popup-color-bar {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-bottom: 0;
+    margin-right: 16px;
+    flex-shrink: 0;
+  }
+
+  .popup-title-row {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .popup-title {
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text-primary);
+    padding-right: 8px;
+    font-family: 'Google Sans', Roboto, Arial, sans-serif;
+    line-height: 1.3;
+  }
+
+  .popup-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 8px 0;
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .popup-row-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    margin-top: 1px;
+  }
+
+  .popup-row-icon svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  .popup-row-text {
+    flex: 1;
+    word-break: break-word;
+    font-family: Roboto, Arial, sans-serif;
+  }
+
+  .popup-row-text a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .popup-row-text a:hover {
+    text-decoration: underline;
+  }
+
+  .popup-attendees {
+    margin-top: 4px;
+  }
+
+  .popup-attendee {
+    padding: 4px 0;
+    font-size: 13px;
+    font-family: Roboto, Arial, sans-serif;
+  }
+
+  .popup-attendee .status {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-left: 4px;
+  }
+
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-family: Roboto, Arial, sans-serif;
+  }
+
+  .loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 10px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Scrollbar for popup */
+  .popup::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .popup::-webkit-scrollbar-thumb {
+    background: #dadce0;
+    border-radius: 4px;
+  }
+
+  .popup::-webkit-scrollbar-track {
+    background: transparent;
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <button class="today-btn" id="todayBtn">Today</button>
+    <div class="header-nav">
+      <button class="nav-btn" id="prevBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" fill="currentColor"/>
+        </svg>
+      </button>
+      <span class="header-date" id="headerDate">Loading...</span>
+      <button class="nav-btn" id="nextBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+    <div style="width: 60px;"></div>
+  </div>
+  <div class="all-day-section" id="allDaySection"></div>
+  <div class="grid-container" id="gridContainer">
+    <div class="time-grid" id="timeGrid"></div>
+    <div class="current-time-line" id="currentTimeLine"></div>
+  </div>
+  <button class="fab" id="fabBtn" title="Create event">
+    <svg width="36" height="36" viewBox="0 0 36 36">
+      <path fill="#34A853" d="M16 16v14h4V20z"/>
+      <path fill="#4285F4" d="M30 16H20l-4 4h14z"/>
+      <path fill="#FBBC04" d="M6 16v4h10l4-4z"/>
+      <path fill="#EA4335" d="M20 16V6h-4v14z"/>
+    </svg>
+  </button>
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup" id="popup"></div>
+  </div>
+  <script type="module" src="./src/app.ts"></script>
+</body>
+</html>
