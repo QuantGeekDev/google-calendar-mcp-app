@@ -20,20 +20,37 @@ export const TOOL_UI_MAP: Record<string, string> = {
   "search-events": "ui://gcal/agenda",
   "get-event": "ui://gcal/event-detail",
   "create-event": "ui://gcal/event-form",
+  "create-events": "ui://gcal/bulk-create",
   "update-event": "ui://gcal/event-form",
+  "delete-event": "ui://gcal/delete-confirm",
   "get-freebusy": "ui://gcal/freebusy",
+  "get-current-time": "ui://gcal/clock",
+  "list-calendars": "ui://gcal/calendar-list",
+  "list-colors": "ui://gcal/colors",
+  "respond-to-event": "ui://gcal/rsvp-confirm",
+  "manage-accounts": "ui://gcal/accounts",
 };
 
 /** All UI resources with their corresponding HTML file names */
 const UI_RESOURCES: Array<{ uri: string; file: string }> = [
+  // Calendar views
   { uri: "ui://gcal/day-view", file: "day-view" },
   { uri: "ui://gcal/week-view", file: "week-view" },
   { uri: "ui://gcal/month-view", file: "month-view" },
+  { uri: "ui://gcal/upcoming", file: "upcoming" },
+  { uri: "ui://gcal/agenda", file: "agenda" },
+  // Event management
   { uri: "ui://gcal/event-detail", file: "event-detail" },
   { uri: "ui://gcal/event-form", file: "event-form" },
-  { uri: "ui://gcal/upcoming", file: "upcoming" },
+  { uri: "ui://gcal/delete-confirm", file: "delete-confirm" },
+  { uri: "ui://gcal/rsvp-confirm", file: "rsvp-confirm" },
+  { uri: "ui://gcal/bulk-create", file: "bulk-create" },
+  // Utilities
   { uri: "ui://gcal/freebusy", file: "freebusy" },
-  { uri: "ui://gcal/agenda", file: "agenda" },
+  { uri: "ui://gcal/calendar-list", file: "calendar-list" },
+  { uri: "ui://gcal/colors", file: "colors" },
+  { uri: "ui://gcal/clock", file: "clock" },
+  { uri: "ui://gcal/accounts", file: "accounts" },
 ];
 
 /** Load an HTML file from the apps directories */
