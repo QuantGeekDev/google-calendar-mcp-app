@@ -11,3 +11,4 @@ settings.local.json
 
 # MCP Apps build output
 dist/
+plans/
