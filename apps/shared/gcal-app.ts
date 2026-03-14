@@ -60,11 +60,30 @@ export interface ColorDefinition {
   foreground: string;
 }
 
-/** Create and connect the MCP App */
+/** Apply theme from host context */
+function applyTheme(theme: string | undefined): void {
+  const t = theme === "dark" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", t);
+}
+
+/** Create and connect the MCP App, with auto theme detection */
 export function createGCalApp(name: string): App {
   const app = new App({ name, version: "0.1.0" });
   const transport = new PostMessageTransport(window.parent);
-  app.connect(transport);
+  app.connect(transport).then(() => {
+    // Apply host theme after initialization
+    const ctx = (app as any)._hostContext;
+    if (ctx?.theme) applyTheme(ctx.theme);
+  }).catch(() => {});
+
+  // Listen for theme changes from host
+  app.setNotificationHandler(
+    { method: "ui/notifications/host-context-changed" } as any,
+    async (params: any) => {
+      if (params?.theme) applyTheme(params.theme);
+    }
+  );
+
   return app;
 }
 

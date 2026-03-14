@@ -5,6 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Event Detail</title>
   <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-hover: #f1f3f4;
+      --bg-active: #e8eaed;
+      --text-primary: #3c4043;
+      --text-secondary: #70757a;
+      --text-icon: #5f6368;
+      --text-muted: #70757a;
+      --border: #dadce0;
+      --border-light: #dadce0;
+      --accent: #1a73e8;
+      --accent-hover: #1765cc;
+      --accent-light: #e8f0fe;
+      --accent-text: #1a73e8;
+      --red: #d93025;
+      --green: #0b8043;
+      --shadow-sm: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+      --shadow-md: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+      --shadow-lg: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+      --card-bg: #ffffff;
+      --font-stack: 'Google Sans', Roboto, Arial, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1f1f1f;
+      --bg-secondary: #2d2d2d;
+      --bg-hover: #3c3c3c;
+      --bg-active: #4a4a4a;
+      --text-primary: #e8eaed;
+      --text-secondary: #9aa0a6;
+      --text-icon: #9aa0a6;
+      --text-muted: #9aa0a6;
+      --border: #3c4043;
+      --border-light: #3c4043;
+      --accent: #8ab4f8;
+      --accent-hover: #aecbfa;
+      --accent-light: #1a3a5c;
+      --accent-text: #8ab4f8;
+      --red: #f28b82;
+      --green: #81c995;
+      --yellow: #fdd663;
+      --current-time: #f28b82;
+      --shadow-sm: 0 1px 3px 0 rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+      --shadow-md: 0 2px 6px 2px rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+      --shadow-lg: 0 2px 6px 2px rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+      --card-bg: #2d2d2d;
+      --hour-height: 48px;
+      --time-gutter: 56px;
+      --label-width: 150px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #1f1f1f;
+        --bg-secondary: #2d2d2d;
+        --bg-hover: #3c3c3c;
+        --bg-active: #4a4a4a;
+        --text-primary: #e8eaed;
+        --text-secondary: #9aa0a6;
+        --text-icon: #9aa0a6;
+        --text-muted: #9aa0a6;
+        --border: #3c4043;
+        --border-light: #3c4043;
+        --accent: #8ab4f8;
+        --accent-hover: #aecbfa;
+        --accent-light: #1a3a5c;
+        --accent-text: #8ab4f8;
+        --red: #f28b82;
+        --green: #81c995;
+        --yellow: #fdd663;
+        --current-time: #f28b82;
+        --shadow-sm: 0 1px 3px 0 rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+        --shadow-md: 0 2px 6px 2px rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+        --shadow-lg: 0 2px 6px 2px rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+        --card-bg: #2d2d2d;
+        --hour-height: 48px;
+        --time-gutter: 56px;
+        --label-width: 150px;
+      }
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -12,9 +94,9 @@
     }
 
     body {
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
-      background: #fff;
-      color: #3c4043;
+      font-family: var(--font-stack);
+      background: var(--bg);
+      color: var(--text-primary);
       display: flex;
       justify-content: center;
       padding: 24px;
@@ -27,9 +109,9 @@
     }
 
     .card {
-      background: #fff;
+      background: var(--card-bg);
       border-radius: 8px;
-      box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+      box-shadow: var(--shadow-md);
       overflow: hidden;
       display: flex;
       flex-direction: row;
@@ -54,20 +136,20 @@
     .event-title {
       font-size: 22px;
       font-weight: 400;
-      color: #3c4043;
+      color: var(--text-primary);
       line-height: 1.4;
       word-break: break-word;
     }
 
     .calendar-name {
       font-size: 14px;
-      color: #70757a;
+      color: var(--text-secondary);
       margin-top: 4px;
     }
 
     .section {
       padding: 14px 0;
-      border-top: 1px solid #dadce0;
+      border-top: 1px solid var(--border);
     }
 
     .section-row {
@@ -85,7 +167,7 @@
       justify-content: center;
       flex-shrink: 0;
       margin-top: 2px;
-      color: #5f6368;
+      color: var(--text-icon);
       line-height: 1;
     }
 
@@ -97,7 +179,7 @@
     .section-label {
       font-size: 11px;
       font-weight: 500;
-      color: #70757a;
+      color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 4px;
@@ -105,12 +187,12 @@
 
     .section-value {
       font-size: 14px;
-      color: #3c4043;
+      color: var(--text-primary);
       line-height: 1.5;
     }
 
     .location-link {
-      color: #1a73e8;
+      color: var(--accent);
       cursor: pointer;
       text-decoration: none;
     }
@@ -121,7 +203,7 @@
 
     .description-text {
       font-size: 14px;
-      color: #3c4043;
+      color: var(--text-primary);
       line-height: 1.6;
       white-space: pre-wrap;
       word-break: break-word;
@@ -131,13 +213,13 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #1a73e8;
+      background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 4px;
       padding: 0 24px;
       height: 36px;
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
+      font-family: var(--font-stack);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
@@ -146,13 +228,13 @@
     }
 
     .join-meeting-btn:hover {
-      background: #1765cc;
-      box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+      background: var(--accent-hover);
+      box-shadow: var(--shadow-md);
     }
 
     .meeting-provider {
       font-size: 12px;
-      color: #70757a;
+      color: var(--text-secondary);
       margin-top: 8px;
     }
 
@@ -173,8 +255,8 @@
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: #e8eaed;
-      color: #5f6368;
+      background: var(--bg-active);
+      color: var(--text-icon);
       font-size: 14px;
       font-weight: 500;
       display: flex;
@@ -192,7 +274,7 @@
     .attendee-name {
       font-size: 14px;
       font-weight: 500;
-      color: #3c4043;
+      color: var(--text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -200,7 +282,7 @@
 
     .attendee-email {
       font-size: 12px;
-      color: #70757a;
+      color: var(--text-secondary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -215,17 +297,17 @@
 
     .organizer-section {
       font-size: 14px;
-      color: #5f6368;
+      color: var(--text-icon);
     }
 
     .organizer-name {
       font-weight: 500;
-      color: #3c4043;
+      color: var(--text-primary);
     }
 
     .recurrence-text {
       font-size: 14px;
-      color: #5f6368;
+      color: var(--text-icon);
     }
 
     .action-bar {
@@ -233,7 +315,7 @@
       flex-wrap: wrap;
       gap: 4px;
       padding-top: 20px;
-      border-top: 1px solid #dadce0;
+      border-top: 1px solid var(--border);
       margin-top: 8px;
     }
 
@@ -242,54 +324,54 @@
       border-radius: 4px;
       padding: 0 12px;
       height: 36px;
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
+      font-family: var(--font-stack);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
       background: transparent;
-      color: #1a73e8;
+      color: var(--accent);
       transition: background 0.15s;
       letter-spacing: 0.25px;
     }
 
     .action-btn:hover {
-      background: #e8f0fe;
+      background: var(--accent-light);
     }
 
     .action-btn.accept {
-      color: #1a73e8;
+      color: var(--accent);
     }
 
     .action-btn.accept:hover {
-      background: #e8f0fe;
+      background: var(--accent-light);
     }
 
     .action-btn.decline {
-      color: #d93025;
+      color: var(--red);
     }
 
     .action-btn.decline:hover {
-      background: #fce8e6;
+      background: rgba(242, 139, 130, 0.15);
     }
 
     .action-btn.maybe {
-      color: #1a73e8;
+      color: var(--accent);
     }
 
     .action-btn.maybe:hover {
-      background: #e8f0fe;
+      background: var(--accent-light);
     }
 
     .action-btn.delete {
-      color: #d93025;
+      color: var(--red);
     }
 
     .action-btn.delete:hover {
-      background: #fce8e6;
+      background: rgba(242, 139, 130, 0.15);
     }
 
     .action-btn.edit {
-      color: #70757a;
+      color: var(--text-secondary);
       cursor: not-allowed;
       opacity: 0.5;
     }
@@ -301,15 +383,15 @@
     .loading {
       text-align: center;
       padding: 60px 20px;
-      color: #70757a;
+      color: var(--text-secondary);
       font-size: 14px;
     }
 
     .loading-spinner {
       width: 32px;
       height: 32px;
-      border: 3px solid #dadce0;
-      border-top-color: #1a73e8;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin: 0 auto 12px;
@@ -333,10 +415,10 @@
     }
 
     .confirm-dialog {
-      background: #fff;
+      background: var(--bg);
       border-radius: 8px;
       padding: 24px;
-      box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+      box-shadow: var(--shadow-md);
       max-width: 400px;
       width: 90%;
     }
@@ -345,12 +427,12 @@
       font-size: 16px;
       font-weight: 500;
       margin-bottom: 8px;
-      color: #3c4043;
+      color: var(--text-primary);
     }
 
     .confirm-dialog p {
       font-size: 14px;
-      color: #70757a;
+      color: var(--text-secondary);
       margin-bottom: 24px;
       line-height: 1.5;
     }
@@ -367,25 +449,25 @@
       border-radius: 4px;
       padding: 0 12px;
       height: 36px;
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
+      font-family: var(--font-stack);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      color: #1a73e8;
+      color: var(--accent);
       transition: background 0.15s;
     }
 
     .confirm-cancel-btn:hover {
-      background: #e8f0fe;
+      background: var(--accent-light);
     }
 
     .confirm-delete-btn {
-      background: #d93025;
+      background: var(--red);
       border: none;
       border-radius: 4px;
       padding: 0 24px;
       height: 36px;
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
+      font-family: var(--font-stack);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
@@ -406,10 +488,10 @@
       color: #fff;
       padding: 12px 24px;
       border-radius: 4px;
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
+      font-family: var(--font-stack);
       font-size: 14px;
       z-index: 200;
-      box-shadow: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+      box-shadow: var(--shadow-md);
       animation: slideUp 0.3s ease;
     }
 

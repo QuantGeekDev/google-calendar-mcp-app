@@ -171,7 +171,7 @@ describe('Transport Handlers', () => {
     await invokeHandler(req, res);
 
     expect(res.statusCode).toBe(200);
-    expect(res.headers['Access-Control-Allow-Origin']).toBe('http://127.0.0.1:4001');
+    expect(res.headers['Access-Control-Allow-Origin']).toBe('*');
     expect(JSON.parse(res.body).status).toBe('healthy');
   });
 

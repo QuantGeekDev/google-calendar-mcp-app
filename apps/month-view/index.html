@@ -5,6 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Month View</title>
   <style>
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --bg-hover: #f1f3f4;
+      --bg-active: #e8eaed;
+      --text-primary: #3c4043;
+      --text-secondary: #70757a;
+      --text-icon: #5f6368;
+      --text-muted: #70757a;
+      --border: #dadce0;
+      --border-light: #dadce0;
+      --accent: #1a73e8;
+      --accent-hover: #1765cc;
+      --accent-light: #e8f0fe;
+      --accent-text: #1a73e8;
+      --red: #d93025;
+      --green: #0b8043;
+      --shadow-sm: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+      --shadow-md: 0 1px 3px 0 rgba(60,64,67,.3), 0 4px 8px 3px rgba(60,64,67,.15);
+      --shadow-lg: 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12), 0 5px 5px -3px rgba(0,0,0,.2);
+      --card-bg: #ffffff;
+      --font-stack: 'Google Sans', Roboto, Arial, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg: #1f1f1f;
+      --bg-secondary: #2d2d2d;
+      --bg-hover: #3c3c3c;
+      --bg-active: #4a4a4a;
+      --text-primary: #e8eaed;
+      --text-secondary: #9aa0a6;
+      --text-icon: #9aa0a6;
+      --text-muted: #9aa0a6;
+      --border: #3c4043;
+      --border-light: #3c4043;
+      --accent: #8ab4f8;
+      --accent-hover: #aecbfa;
+      --accent-light: #1a3a5c;
+      --accent-text: #8ab4f8;
+      --red: #f28b82;
+      --green: #81c995;
+      --yellow: #fdd663;
+      --current-time: #f28b82;
+      --shadow-sm: 0 1px 3px 0 rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+      --shadow-md: 0 2px 6px 2px rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+      --shadow-lg: 0 2px 6px 2px rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+      --card-bg: #2d2d2d;
+      --hour-height: 48px;
+      --time-gutter: 56px;
+      --label-width: 150px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #1f1f1f;
+        --bg-secondary: #2d2d2d;
+        --bg-hover: #3c3c3c;
+        --bg-active: #4a4a4a;
+        --text-primary: #e8eaed;
+        --text-secondary: #9aa0a6;
+        --text-icon: #9aa0a6;
+        --text-muted: #9aa0a6;
+        --border: #3c4043;
+        --border-light: #3c4043;
+        --accent: #8ab4f8;
+        --accent-hover: #aecbfa;
+        --accent-light: #1a3a5c;
+        --accent-text: #8ab4f8;
+        --red: #f28b82;
+        --green: #81c995;
+        --yellow: #fdd663;
+        --current-time: #f28b82;
+        --shadow-sm: 0 1px 3px 0 rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+        --shadow-md: 0 2px 6px 2px rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+        --shadow-lg: 0 2px 6px 2px rgba(0,0,0,.5), 0 1px 2px 0 rgba(0,0,0,.3);
+        --card-bg: #2d2d2d;
+        --hour-height: 48px;
+        --time-gutter: 56px;
+        --label-width: 150px;
+      }
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -12,9 +94,9 @@
     }
 
     body {
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
-      background: #fff;
-      color: #3c4043;
+      font-family: var(--font-stack);
+      background: var(--bg);
+      color: var(--text-primary);
       overflow-x: hidden;
     }
 
@@ -36,21 +118,21 @@
 
     .today-btn {
       background: none;
-      border: 1px solid #dadce0;
+      border: 1px solid var(--border);
       border-radius: 4px;
       padding: 6px 16px;
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
+      font-family: var(--font-stack);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      color: #3c4043;
+      color: var(--text-primary);
       transition: background 0.15s, border-color 0.15s;
       line-height: 20px;
     }
 
     .today-btn:hover {
-      background: #f1f3f4;
-      border-color: #c0c4c8;
+      background: var(--bg-hover);
+      border-color: var(--border);
     }
 
     .nav-btn {
@@ -64,25 +146,25 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #5f6368;
+      color: var(--text-icon);
       transition: background 0.15s;
     }
 
     .nav-btn:hover {
-      background: #f1f3f4;
+      background: var(--bg-hover);
     }
 
     .nav-btn svg {
       width: 20px;
       height: 20px;
-      fill: #5f6368;
+      fill: var(--text-icon);
     }
 
     .header h1 {
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
+      font-family: var(--font-stack);
       font-size: 22px;
       font-weight: 400;
-      color: #3c4043;
+      color: var(--text-primary);
       white-space: nowrap;
     }
 
@@ -91,7 +173,7 @@
     .dow-row {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      border-bottom: 1px solid #dadce0;
+      border-bottom: 1px solid var(--border);
     }
 
     .dow-cell {
@@ -99,7 +181,7 @@
       padding: 8px 0;
       font-size: 11px;
       font-weight: 500;
-      color: #70757a;
+      color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.8px;
     }
@@ -109,15 +191,15 @@
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      border-left: 1px solid #dadce0;
+      border-left: 1px solid var(--border);
     }
 
     .day-cell {
       min-height: 80px;
-      border-right: 1px solid #dadce0;
-      border-bottom: 1px solid #dadce0;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
       padding: 2px 4px;
-      background: #fff;
+      background: var(--bg);
       cursor: pointer;
       transition: background 0.1s;
       position: relative;
@@ -125,13 +207,13 @@
     }
 
     .day-cell:hover {
-      background: #f8f9fa;
+      background: var(--bg-secondary);
     }
 
     .day-cell.outside-month {
-      color: #70757a;
+      color: var(--text-secondary);
       opacity: 0.5;
-      background: #fff;
+      background: var(--bg);
     }
 
     /* ---- Day number ---- */
@@ -139,7 +221,7 @@
     .day-number {
       font-size: 12px;
       font-weight: 500;
-      color: #3c4043;
+      color: var(--text-primary);
       width: 24px;
       height: 24px;
       display: flex;
@@ -151,13 +233,13 @@
     }
 
     .day-cell.today .day-number {
-      background: #1a73e8;
+      background: var(--accent);
       color: #fff;
       font-weight: 500;
     }
 
     .day-cell.outside-month .day-number {
-      color: #70757a;
+      color: var(--text-secondary);
     }
 
     /* ---- Event pills ---- */
@@ -191,7 +273,7 @@
 
     .more-link {
       font-size: 11px;
-      color: #1a73e8;
+      color: var(--accent);
       cursor: pointer;
       padding: 1px 6px;
       font-weight: 500;
@@ -218,10 +300,10 @@
     }
 
     .popup {
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
-      background: #fff;
+      font-family: var(--font-stack);
+      background: var(--bg);
       border-radius: 8px;
-      box-shadow: 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12), 0 5px 5px -3px rgba(0,0,0,.2);
+      box-shadow: var(--shadow-lg);
       max-width: 380px;
       width: 90%;
       max-height: 80vh;
@@ -237,7 +319,7 @@
       background: none;
       border: none;
       font-size: 20px;
-      color: #5f6368;
+      color: var(--text-icon);
       cursor: pointer;
       width: 28px;
       height: 28px;
@@ -248,15 +330,15 @@
     }
 
     .popup-close:hover {
-      background: #f1f3f4;
+      background: var(--bg-hover);
     }
 
     .popup h2 {
-      font-family: 'Google Sans', Roboto, Arial, sans-serif;
+      font-family: var(--font-stack);
       font-size: 16px;
       font-weight: 500;
       margin-bottom: 12px;
-      color: #3c4043;
+      color: var(--text-primary);
       padding-right: 28px;
     }
 
@@ -265,14 +347,14 @@
       align-items: flex-start;
       gap: 8px;
       padding: 8px 6px;
-      border-bottom: 1px solid #dadce0;
+      border-bottom: 1px solid var(--border);
       cursor: pointer;
       transition: background 0.1s;
       border-radius: 4px;
     }
 
     .popup-event-item:hover {
-      background: #f8f9fa;
+      background: var(--bg-secondary);
     }
 
     .popup-event-item:last-child {
@@ -295,7 +377,7 @@
     .popup-event-title {
       font-size: 13px;
       font-weight: 500;
-      color: #3c4043;
+      color: var(--text-primary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -303,7 +385,7 @@
 
     .popup-event-time {
       font-size: 11px;
-      color: #70757a;
+      color: var(--text-secondary);
       margin-top: 2px;
     }
 
@@ -312,15 +394,15 @@
     .detail-popup h2 {
       font-size: 18px;
       font-weight: 400;
-      color: #3c4043;
+      color: var(--text-primary);
       margin-bottom: 4px;
     }
 
     .detail-section {
       padding: 8px 0;
-      border-bottom: 1px solid #dadce0;
+      border-bottom: 1px solid var(--border);
       font-size: 13px;
-      color: #5f6368;
+      color: var(--text-icon);
     }
 
     .detail-section:last-child {
@@ -329,7 +411,7 @@
 
     .detail-label {
       font-size: 11px;
-      color: #70757a;
+      color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.8px;
       margin-bottom: 4px;
@@ -337,7 +419,7 @@
     }
 
     .detail-value {
-      color: #3c4043;
+      color: var(--text-primary);
     }
 
     /* ---- Loading & empty states ---- */
@@ -345,7 +427,7 @@
     .loading {
       text-align: center;
       padding: 60px 20px;
-      color: #70757a;
+      color: var(--text-secondary);
       font-size: 14px;
       grid-column: 1 / -1;
     }
@@ -353,8 +435,8 @@
     .loading-spinner {
       width: 32px;
       height: 32px;
-      border: 3px solid #dadce0;
-      border-top-color: #1a73e8;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin: 0 auto 12px;
@@ -367,7 +449,7 @@
     .empty-state {
       text-align: center;
       padding: 40px 20px;
-      color: #70757a;
+      color: var(--text-secondary);
       font-size: 14px;
     }
   </style>
