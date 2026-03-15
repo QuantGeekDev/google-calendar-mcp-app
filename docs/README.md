@@ -1,49 +1,35 @@
-# Documentation Index
+# Documentation
 
-Welcome to the Google Calendar MCP Server documentation.
+## MCP Apps UI (New)
 
-## Getting Started
+Interactive UI screens rendered inline in AI chat conversations.
 
-- [Main README](../README.md) - Quick start guide and overview
-- [Authentication Setup](authentication.md) - Detailed Google Cloud setup instructions
+| Document | Description |
+|----------|-------------|
+| [mcp-apps/how-it-works.md](mcp-apps/how-it-works.md) | How the MCP Apps protocol works and how this server implements it |
+| [mcp-apps/ui-screens.md](mcp-apps/ui-screens.md) | All 15 UI screens — tool mappings, features, screenshots |
+| [mcp-apps/hosting-guide.md](mcp-apps/hosting-guide.md) | Testing with MCPJam, Claude Desktop, tunnels, and device deployment |
+| [mcp-apps/theming.md](mcp-apps/theming.md) | Light/dark mode, CSS custom properties, host theme detection |
+| [mcp-apps/shared-components.md](mcp-apps/shared-components.md) | Reusable component library for building new UIs |
 
-## User Guides
+## Calendar Server (Upstream)
 
-- [Advanced Usage](advanced-usage.md) - Multi-account, batch operations, smart scheduling
+Core Google Calendar MCP server documentation (from [nspady/google-calendar-mcp](https://github.com/nspady/google-calendar-mcp)).
 
-## Deployment
-
-- [Deployment Guide](deployment.md) - HTTP transport, Docker, cloud deployment
-
-## Development
-
-- [Development Guide](development.md) - Contributing and development setup
-- [Architecture Overview](architecture.md) - Technical architecture details
-- [Testing Guide](testing.md) - Running and writing tests
-
-## Reference
-
-- [API Documentation](https://developers.google.com/calendar/api/v3/reference) - Google Calendar API
-- [MCP Specification](https://modelcontextprotocol.io/docs) - Model Context Protocol
+| Document | Description |
+|----------|-------------|
+| [authentication.md](authentication.md) | Google Cloud OAuth setup |
+| [advanced-usage.md](advanced-usage.md) | Multi-account, batch operations, smart scheduling |
+| [architecture.md](architecture.md) | Server architecture, handler patterns, services |
+| [deployment.md](deployment.md) | HTTP transport, Docker, cloud deployment |
+| [development.md](development.md) | Contributing and development setup |
+| [testing.md](testing.md) | Unit and integration test guide |
+| [docker.md](docker.md) | Docker deployment |
 
 ## Quick Links
 
-### For Users
-1. Start with the [Main README](../README.md)
-2. Follow [Authentication Setup](authentication.md)
-3. See [Advanced Usage](advanced-usage.md) for multi-account and batch operations
+**For users:** Start with the [main README](../README.md), then [authentication setup](authentication.md).
 
-### For Developers
-1. Read [Architecture Overview](architecture.md)
-2. Set up with [Development Guide](development.md)
-3. Run tests with [Testing Guide](testing.md)
+**For developers:** Read [how MCP Apps works](mcp-apps/how-it-works.md), then the [architecture overview](architecture.md).
 
-### For Deployment
-1. Review [Deployment Guide](deployment.md)
-2. Check security considerations
-3. Set up monitoring
-
-## Need Help?
-
-- [GitHub Issues](https://github.com/nspady/google-calendar-mcp/issues)
-- [GitHub Discussions](https://github.com/nspady/google-calendar-mcp/discussions)
+**For testing:** See the [hosting guide](mcp-apps/hosting-guide.md) for MCPJam, Claude Desktop, and tunnel setup.
